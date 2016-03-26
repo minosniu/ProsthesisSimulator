@@ -11,14 +11,24 @@
 
 #define DYNAMICS_TYPEA_ON 1
 
-#define mensajeError(cadena) MessageBoxA(NULL,cadena,"Mensaje",MB_OK)
+#define errorMsg(cadena) print("%s", cadena)//MessageBoxA(NULL,cadena,"Mensaje",MB_OK)
 
-#pragma comment(lib, "opengl32.lib")
-#pragma comment(lib, "glu32.lib")
+//#pragma comment(lib, "opengl32.lib")
+//#pragma comment(lib, "glu32.lib")
 
 #include "Main.h"
 #include "3ds.h"
 #include <math.h>
+
+#ifdef __linux__
+    #include <GL/gl.h>
+    #include <GL/glu.h>
+    #include <GL/glut.h>
+#elif __APPLE__
+    #include <OpenGL/gl.h>
+    #include <OpenGL/glu.h>
+    #include <GLUT/glut.h>
+#endif
 
 GLuint	base;				// Base Display List For The Font Set
 
@@ -40,17 +50,17 @@ bool bBanderaDireccion=false;
 //Variables para vista
 float anguloOjo;
 
-//Variables de CámaraRotacional
+//Variables de C?maraRotacional
 float distancia=10.0f, alturaCamara=5, alturaObjetivo, angulo;
 
-//Variables auxiliares de la prótesis
+//Variables auxiliares de la pr?tesis
 float posicionadorX=0,posicionadorY=0,posicionadorZ=0;
 float rotadorX=0,rotadorY=0,rotadorZ=0;
 float rotadorX2=0,rotadorY2=0,rotadorZ2=0;
 float rotadorX3=0,rotadorY3=0,rotadorZ3=0;
 float rotadorX4=0,rotadorY4=0,rotadorZ4=0;
 
-//Variables de la prótesis
+//Variables de la pr?tesis
 
 float AngDistalIndice;
 float AngDistalAnular;
@@ -119,18 +129,18 @@ t3DModel g_3DModelPalma;
 //Objeto para acceder a las variables de control del personaje
 paramObjCam player1;
 
-//Objeto para acceder a la selección de materiales
+//Objeto para acceder a la selecci?n de materiales
 
 GLuint grupos;
 
 //Variables para iluminacion
-GLfloat LightPos[] = {-100.0f, 40.0f, 50.0f, 1.0f};		// Posición de la luz
+GLfloat LightPos[] = {-100.0f, 40.0f, 50.0f, 1.0f};		// Posici?n de la luz
 GLfloat LightAmb[] = { 0.9f,  0.9f, 0.9f, 1.0f};		// Valores de la componente ambiente
 GLfloat LightDif[] = { 0.9f,  0.9f, 0.9f, 1.0f};		// Valores de la componente difusa
 GLfloat LightSpc[] = { 0.6f,  0.6f, 0.6f, 1.0f};		// Valores de la componente especular
 CVector lightPosition;
 
-//Variables para animación de texturas
+//Variables para animaci?n de texturas
 float aText1;
 
 GLvoid glPrint(const char *fmt, ...);					// Custom GL "Print" Routine
@@ -160,16 +170,16 @@ void initSerialPort()
      {
          if(GetLastError()==ERROR_FILE_NOT_FOUND)
          {
-             mensajeError("No existe el puerto serial");
+             errorMsg("No existe el puerto serial");
          }
-         mensajeError("No se que paso, pero no puede estar bien");
+         errorMsg("No se que paso, pero no puede estar bien");
      }
      
      //PREPARAR LOS PARAMETROS
      DCB dcbSerialParams = {0};
      dcbSerialParams.DCBlength=sizeof(dcbSerialParams);
      if (!GetCommState(hSerial, &dcbSerialParams)) {
-        mensajeError("Error al obtener el estado al puerto");
+        errorMsg("Error al obtener el estado al puerto");
      }
 	 dcbSerialParams.BaudRate=CBR_115200;
      dcbSerialParams.ByteSize=8;
@@ -177,7 +187,7 @@ void initSerialPort()
      dcbSerialParams.Parity=NOPARITY;
      if(!SetCommState(hSerial, &dcbSerialParams))
      {
-         mensajeError("Error al asignar el estado al puerto");
+         errorMsg("Error al asignar el estado al puerto");
      }
      
      //PREPARAR LOS TIMEOUTS
@@ -189,7 +199,7 @@ void initSerialPort()
      timeouts.WriteTotalTimeoutMultiplier=10;
      if(!SetCommTimeouts(hSerial, &timeouts))
      {
-         mensajeError("Algo paso con los timeouts");
+         errorMsg("Algo paso con los timeouts");
      }
 }
 
@@ -201,14 +211,14 @@ void ComunicacionSerialMandaByte(unsigned char *dat1,char cManda)
      DWORD dwBytesEscritos = 0;
      if(!WriteFile(hSerial, szBuff, 1, &dwBytesEscritos, NULL))
      {
-         mensajeError("Algun error en la escritura de datos");
+         errorMsg("Algun error en la escritura de datos");
      }
 
 	 unsigned char szBuff2 ;
      DWORD dwBytesRead = 0;
 	 if(!ReadFile(hSerial, &szBuff2, 1, &dwBytesRead, 0))
      {
-         mensajeError("Algun error en la lectura de datos 1");
+         errorMsg("Algun error en la lectura de datos 1");
      }
 	 *dat1=szBuff2;
 }
@@ -223,14 +233,14 @@ void ComunicacionSerialMandaByte(unsigned char *dat1,unsigned char *dat2,char cM
      DWORD dwBytesEscritos = 0;
      if(!WriteFile(hSerial, szBuff, 1, &dwBytesEscritos, NULL))
      {
-         mensajeError("Algun error en la escritura de datos");
+         errorMsg("Algun error en la escritura de datos");
      }
 
 	 unsigned char szBuff1 ;
      DWORD dwBytesRead1 = 0;
 	 if(!ReadFile(hSerial, &szBuff1, 1, &dwBytesRead1, 0))
      {
-         mensajeError("Algun error en la lectura de datos 1");
+         errorMsg("Algun error en la lectura de datos 1");
      }
 	 *dat1=szBuff1;
 
@@ -238,7 +248,7 @@ void ComunicacionSerialMandaByte(unsigned char *dat1,unsigned char *dat2,char cM
      DWORD dwBytesRead2 = 0;
 	 if(!ReadFile(hSerial, &szBuff2, 1, &dwBytesRead2, 0))
      {
-         mensajeError("Algun error en la lectura de datos 1");
+         errorMsg("Algun error en la lectura de datos 1");
      }
 	 *dat2=szBuff2;
 }
@@ -737,7 +747,7 @@ void DibujaProtesis(short dat1,short dat2,short iden)
 		glPopMatrix();
 	glPopMatrix();
 
-	// Meñique
+	// Me?ique
 	glPushMatrix();
 		glTranslatef(1.64f,0.24f,1.32f);
 		glRotatef(84.0f,0,1,0);
@@ -803,7 +813,7 @@ void DibujaProtesis(short dat1,short dat2,short iden)
 
 LRESULT	CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);	// Declaracion de WndProc (Procedimiento de ventana)
 
-GLvoid ReDimensionaEscenaGL(GLsizei width, GLsizei height)	// Redimensiona e inicializa la ventana
+GLvoid resizeGLScene(GLsizei width, GLsizei height)	// Redimensiona e inicializa la ventana
 {
 	if (height==0)							// Para que no se presente una division por cero
 	{
@@ -902,7 +912,7 @@ void DescargaTexturas()
 
 void InicializaParametrosdeControl()
 {
-	//Vamos a definir un valor de un ángulo de apertura entre dos
+	//Vamos a definir un valor de un ?ngulo de apertura entre dos
 	anguloOjo=1.0f*GL_PI/180.0f;	//4 grados entre ojos.
 }
 
@@ -923,7 +933,7 @@ int IniGL(GLvoid)										// Aqui se configuran los parametros iniciales de Ope
 	glClearDepth(1.0f);									// Valor para el Depth Buffer
 	glEnable(GL_DEPTH_TEST);							// Activa Depth Testing
 	glDepthFunc(GL_LEQUAL);								// Tipo de Depth Testing a usar
-	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);	// Correccion de cálculos de perspectiva
+	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);	// Correccion de c?lculos de perspectiva
 
 	glCullFace(GL_BACK);								// Configurado para eliminar caras traseras
 	glEnable(GL_CULL_FACE);								// Activa eliminacion de caras ocultas
@@ -934,7 +944,7 @@ int IniGL(GLvoid)										// Aqui se configuran los parametros iniciales de Ope
 	glLightfv(GL_LIGHT0, GL_SPECULAR, LightSpc);		// Componente especular
 
 	glEnable(GL_LIGHT0);					// Activa luz0
-	glEnable(GL_LIGHTING);					// Habilita la iluminación
+	glEnable(GL_LIGHTING);					// Habilita la iluminaci?n
 
 	CargaModelos();
 	CargaTexturas();
@@ -952,11 +962,11 @@ float AngPos=PI;
 
 void CambiaAnguloCamara(int funcion)
 {
-	if(funcion == 1) //Incrementa ángulo de la cámara
+	if(funcion == 1) //Incrementa ?ngulo de la c?mara
 	{
 		AngPos+=1;
 	}
-	else if(funcion == 2) //Decrementa ángulo de la cámara
+	else if(funcion == 2) //Decrementa ?ngulo de la c?mara
 	{
 		AngPos-=1;
 	}
@@ -968,7 +978,7 @@ float angu1=0,angu2=0;
 void DibujaLuz(CVector l)
 {
 	//Dibuja una esfera que representa la fuente luminosa
-	glDisable(GL_LIGHTING);				// Deshabilita iluminación
+	glDisable(GL_LIGHTING);				// Deshabilita iluminaci?n
 	
 	glPushMatrix();
 		glTranslatef(l.x, l.y, l.z);		// Traslada a la posicion de la luz
@@ -978,7 +988,7 @@ void DibujaLuz(CVector l)
 	glPopMatrix();
 
 
-	//glEnable(GL_LIGHTING);				// Habilita Iluminación
+	//glEnable(GL_LIGHTING);				// Habilita Iluminaci?n
 	glColor3f(1.0f, 1.0f, 1.0f);
 }
 
@@ -1016,382 +1026,33 @@ int RenderizaEscena(GLvoid)								// Aqui se dibuja todo lo que aparecera en la
 	return TRUE;
 }
 
-GLvoid DestruyeVentanaOGL(GLvoid)						// Elimina la ventana apropiadamente
-{
-	if (hRC)											// Si existe un contexto de renderizado...
-	{
-		if (!wglMakeCurrent(NULL,NULL))					// Si no se pueden liberar los contextos DC y RC...
-		{
-			MessageBox(NULL,"Falla al liberar DC y RC.","Error de finalización",MB_OK | MB_ICONINFORMATION);
-		}
+int contador = 0;
 
-		if (!wglDeleteContext(hRC))						// Si no se puede eliminar el RC?
-		{
-			MessageBox(NULL,"Falla al liberar el contexto de renderizado.","Error de finalización",MB_OK | MB_ICONINFORMATION);
-		}
-		hRC=NULL;										// Se pone RC en NULL
-	}
-
-	if (hDC && !ReleaseDC(hWnd,hDC))					// Si no se puede eliminar el DC
-	{
-		MessageBox(NULL,"Falla al liberar el contexto de renderizado.","Error de finalización",MB_OK | MB_ICONINFORMATION);
-		hDC=NULL;										// Se pone DC en NULL
-	}
-
-	if (hWnd && !DestroyWindow(hWnd))					// Si no se puede destruir la ventana
-	{
-		MessageBox(NULL,"No se pudo liberar hWnd.","Error de finalización",MB_OK | MB_ICONINFORMATION);
-		hWnd=NULL;										// Se pone hWnd en NULL
-	}
-
-	if (!UnregisterClass("OpenGL",hInstance))			// Si no se puede eliminar el registro de la clase
-	{
-		MessageBox(NULL,"No se pudo eliminar el registro de la clase.","Error de finalización",MB_OK | MB_ICONINFORMATION);
-		hInstance=NULL;									// Se pone hInstance en NULL
-	}
-}
-
-
-
-
-
-
-//	Este código crea la ventana de OpenGL.  Parámetros:					
-//	title			- Titulo en la parte superior de la ventana			
-//	width			- Ancho de la ventana								
-//	height			- Alto de la ventana								
-//	bits			- Número de bits a usar para el color (8/16/24/32)	
-  
-BOOL CreaVentanaOGL(char* title, int width, int height, int bits)
-{
-	GLuint	PixelFormat;				// Guarda el resultado despues de determinar el formato a usar
-	WNDCLASS	wc;						// Estructura de la clase ventana
-	DWORD		dwExStyle;				// Estilo extendido de ventana
-	DWORD		dwStyle;				// Estilo de ventana
-	RECT		WindowRect;				// Guarda los valores Superior Izquierdo / Inferior Derecho del rectángulo
-	WindowRect.left=(long)0;			// Inicia el valor Izquierdo a 0
-	WindowRect.right=(long)width;		// Inicia el valor Derecho al ancho especificado
-	WindowRect.top=(long)0;				// Inicia el valor Superior a 0
-	WindowRect.bottom=(long)height;		// Inicia el valor Inferior al alto especificado
-
-	hInstance			= GetModuleHandle(NULL);				// Guarda una instancia de la ventana
-	wc.style			= CS_HREDRAW | CS_VREDRAW | CS_OWNDC;	// Redibuja el contenido de la ventana al redimensionarla
-	wc.lpfnWndProc		= (WNDPROC) WndProc;					// Maneja los mensajes para WndProc
-	wc.cbClsExtra		= 0;									// Ningun dato extra para la clase
-	wc.cbWndExtra		= 0;									// Ningun dato extra para la ventana
-	wc.hInstance		= hInstance;							// Inicia la instancia
-	wc.hIcon			= LoadIcon(NULL, IDI_WINLOGO);			// Carga el ícono por defecto
-	wc.hCursor			= LoadCursor(NULL, IDC_ARROW);			// Carga el puntero de flecha
-	wc.hbrBackground	= NULL;									// No se requiere ningun fondo
-	wc.lpszMenuName		= NULL;									// No hay menú en la ventana
-	wc.lpszClassName	= "OpenGL";								// Fija el nombre de la clase.
-
-	if (!RegisterClass(&wc))									// Intenta registrar la clase de ventana
-	{
-		MessageBox(NULL,"Failed To Register The Window Class.","ERROR",MB_OK|MB_ICONEXCLAMATION);
-		return FALSE;											
-	}
-		
-	dwExStyle=WS_EX_APPWINDOW | WS_EX_WINDOWEDGE;					// Estilo extendido de ventana
-	dwStyle=WS_OVERLAPPEDWINDOW;									// Estilo de ventana
-
-	AdjustWindowRectEx(&WindowRect, dwStyle, FALSE, dwExStyle);		// Ajusta la ventana al tamaño especificado
-
-	// Crea la ventana
-	if (!(hWnd=CreateWindowEx(	dwExStyle,							// Estilo extendido para la ventana
-								"OpenGL",							// Nombre de la clase
-								title,								// Título de la ventana
-								dwStyle |							// Definición del estilo de la ventana
-								WS_CLIPSIBLINGS |					// Estilo requerido de la ventana
-								WS_CLIPCHILDREN,					// Estilo requerido de la ventana
-								0, 0,								// Posición de la ventana
-								WindowRect.right-WindowRect.left,	// Calcula el ancho de la ventana
-								WindowRect.bottom-WindowRect.top,	// Calcula el alto de la ventana
-								NULL,								// No hay ventana superior
-								NULL,								// No hay menú
-								hInstance,							// Instancia
-								NULL)))								// No se pasa nada a WM_CREATE
-	{
-		DestruyeVentanaOGL();										// Resetea el despliegue
-		MessageBox(NULL,"Error al crear la ventana.","ERROR",MB_OK|MB_ICONEXCLAMATION);
-		return FALSE;								
-	}
-
-	static	PIXELFORMATDESCRIPTOR pfd=				// pfd Tells Windows How We Want Things To Be
-	{
-		sizeof(PIXELFORMATDESCRIPTOR),				// Size Of This Pixel Format Descriptor
-		1,											// Version Number
-		PFD_DRAW_TO_WINDOW |						// Format Must Support Window
-		PFD_SUPPORT_OPENGL |						// Format Must Support OpenGL
-		PFD_DOUBLEBUFFER,							// Must Support Double Buffering
-		PFD_TYPE_RGBA,								// Request An RGBA Format
-		bits,										// Select Our Color Depth
-		0, 0, 0, 0, 0, 0,							// Color Bits Ignored
-		0,											// No Alpha Buffer
-		0,											// Shift Bit Ignored
-		32*4,											// No Accumulation Buffer
-		32, 32, 32, 32,									// Accumulation Bits Ignored
-		16,											// 16Bit Z-Buffer (Depth Buffer)  
-		0,											// No Stencil Buffer
-		0,											// No Auxiliary Buffer
-		PFD_MAIN_PLANE,								// Main Drawing Layer
-		0,											// Reserved
-		0, 0, 0										// Layer Masks Ignored
-	};
-	
-	if (!(hDC=GetDC(hWnd)))							// Si no se creo el contexto de dispositivo...
-	{
-		DestruyeVentanaOGL();						// Resetea el despliegue
-		MessageBox(NULL,"No se puede crear un contexto de dispositivo GL.","ERROR",MB_OK|MB_ICONEXCLAMATION);
-		return FALSE;								
-	}
-
-	if (!(PixelFormat=ChoosePixelFormat(hDC,&pfd)))	// Si Windows no encontró un formato de pixel compatible
-	{
-		DestruyeVentanaOGL();						// Resetea el despliegue
-		MessageBox(NULL,"No se puede encontrar un formato de pixel compatible.","ERROR",MB_OK|MB_ICONEXCLAMATION);
-		return FALSE;								
-	}
-
-	if(!SetPixelFormat(hDC,PixelFormat,&pfd))		// Si no se pudo habilitar el formato de pixel
-	{
-		DestruyeVentanaOGL();						// Resetea el despliegue
-		MessageBox(NULL,"No se puede usar el formato de pixel.","ERROR",MB_OK|MB_ICONEXCLAMATION);
-		return FALSE;								
-	}
-
-	if (!(hRC=wglCreateContext(hDC)))				// Si no se creo el contexto de renderizado
-	{
-		DestruyeVentanaOGL();						// Resetea el despliegue
-		MessageBox(NULL,"No se puede crear un contexto de renderizado GL.","ERROR",MB_OK|MB_ICONEXCLAMATION);
-		return FALSE;								
-	}
-
-	if(!wglMakeCurrent(hDC,hRC))					// Si no se puede activar el contexto de renderizado
-	{
-		DestruyeVentanaOGL();						// Resetea el despliegue
-		MessageBox(NULL,"No se puede usar el contexto de renderizado GL.","ERROR",MB_OK|MB_ICONEXCLAMATION);
-		return FALSE;								
-	}
-
-	ShowWindow(hWnd,SW_SHOW);				// Muestra la ventana
-	SetForegroundWindow(hWnd);				// Le da la prioridad mas alta
-	SetFocus(hWnd);							// Pasa el foco del teclado a la ventana
-	ReDimensionaEscenaGL(width, height);	// Inicia la perspectiva para la ventana OGL
-
-	if (!IniGL())							// Si no se inicializa la ventana creada
-	{
-		DestruyeVentanaOGL();				// Resetea el despliegue
-		MessageBox(NULL,"Falla en la inicialización.","ERROR",MB_OK|MB_ICONEXCLAMATION);
-		return FALSE;								
-	}
-
-	return TRUE;							// Todo correcto
-}
-
-LRESULT CALLBACK WndProc(	HWND	hWnd,	// Manejador para esta ventana
-							UINT	uMsg,	// Mensaje para esta ventana
-							WPARAM	wParam,	// Información adicional del mensaje
-							LPARAM	lParam)	// Información adicional del mensaje
-{
-	switch (uMsg)							// Revisa los mensajes de la ventana
-	{
-		case WM_ACTIVATE:					// Revisa el mensaje de activación de ventana
-		{
-			if (!HIWORD(wParam))			// Revisa el estado de minimización
-			{
-				active=TRUE;				// El programa está activo
-			}
-			else
-			{
-				active=FALSE;				// El programa no está activo
-			}
-
-			return 0;						// Regresa al ciclo de mensajes
-		}
-
-		case EV_RXFLAG :					// Revisa el mensaje de activación de ventana
-		{
-			if (!HIWORD(wParam))			// Revisa el estado de minimización
-			{
-				active=TRUE;				// El programa está activo
-			}
-			else
-			{
-				active=FALSE;				// El programa no está activo
-			}
-
-			return 0;						// Regresa al ciclo de mensajes
-		}
-
-		case WM_SYSCOMMAND:					// Intercepta comandos del sistema
-		{
-			switch (wParam)					// Revisa llamadas del sistema
-			{
-				case SC_SCREENSAVE:			// ¿Screensaver tratando de iniciar?
-				case SC_MONITORPOWER:		// ¿Monitor tratando de entrar a modo de ahorro de energía?
-				return 0;					// Evita que suceda
-			}
-			break;							// Sale del caso
-		}
-
-		case WM_CLOSE:						// Si se recibe un mensaje de cerrar...
-		{
-			PostQuitMessage(0);				// Se manda el mensaje de salida
-			return 0;						// y se regresa al ciclo
-		}
-
-		case WM_KEYDOWN:					// Si se está presionando una tecla...
-		{
-			keys[wParam] = TRUE;			// Si es así, se marca como TRUE
-			return 0;						// y se regresa al ciclo
-		}
-
-		case WM_KEYUP:						// ¿Se ha soltado una tecla?
-		{
-			keys[wParam] = FALSE;			// Si es así, se marca como FALSE
-			return 0;						// y se regresa al ciclo
-		}
-
-		case WM_SIZE:						// Si se redimensiona la ventana...
-		{
-			ReDimensionaEscenaGL(LOWORD(lParam),HIWORD(lParam));  	// LoWord=Width, HiWord=Height
-			return 0;						// y se regresa al ciclo
-		}
-	}
-
-	// Pasa todos los mensajes no considerados a DefWindowProc
-	return DefWindowProc(hWnd,uMsg,wParam,lParam);
-}
-
-
-int contador=0;
-
-// Este es el punto de entrada al programa; la función principal 
-int WINAPI WinMain(	HINSTANCE	hInstance,			// Instancia
-					HINSTANCE	hPrevInstance,		// Instancia previa
-					LPSTR		lpCmdLine,			// Parametros de la linea de comandos
-					int			nCmdShow)			// Muestra el estado de la ventana
-{
-	MSG		msg;									// Estructura de mensajes de la ventana
-	BOOL	done=FALSE;								// Variable booleana para salir del ciclo
-
-	// Crea la ventana OpenGL
-	if (!CreaVentanaOGL("Protesis",640,480,16))
-	{
-		return 0;									// Salir del programa si la ventana no fue creada
-	}
-
-	
-#if(USING_SERIAL==1)
-	initSerialPort();
-#endif
-	/*
-	while (true)
-    {
-        if (PeekMessage(&msg, 0, 0, 0, PM_REMOVE))
-		{
-			TranslateMessage(&msg);
-			DispatchMessage(&msg);
-		}
-		if(msg.message==WM_QUIT)
-			break;
-		dato=ComunicacionSerialMandaByte(mandacaracter);
-		sprintf(str0,"%c",dato);
-		SetWindowTextA(hWnd,str0);
-		//RenderizaEscena();				// Dibuja la escena
-		//SwapBuffers(hDC);
-		//			direct.render();
-    }
-*/
-
-	while(!done)									// Mientras done=FALSE
-	{
-		if (PeekMessage(&msg,NULL,0,0,PM_REMOVE))	// Revisa si hay mensajes en espera
-		{
-			if (msg.message==WM_QUIT)				// Si se ha recibido el mensje de salir...
-			{
-				done=TRUE;							// Entonces done=TRUE
-			}
-			else									// Si no, Procesa los mensajes de la ventana
-			{
-				TranslateMessage(&msg);				// Traduce el mensaje
-				DispatchMessage(&msg);				// Envia el mensaje
-			}
-		}
-		else										// Si no hay mensajes...
-		{
-			// Dibuja la escena. 
-			if (active)								// Si está activo el programa...
-			{
-				if (keys[VK_ESCAPE])				// Si se ha presionado ESC
-				{
-					done=TRUE;						// ESC indica el termino del programa
-				}
-				else								// De lo contrario, actualiza la pantalla
-				{
-#if(USING_SERIAL==1)
-					sprintf(str0,"  %d    %d  ",dato1,dato2);	//Pointers
-					SetWindowTextA(hWnd,str0);
-					
-#else
-					if(!bShowData)
-						sprintf(str0, "BME504 Simulator - John Rocamora");	
-					else
-						sprintf(str0,"  %d    %d  ",dato1,dato2);	//Pointers
-					//sprintf(str0," %f    %f    %f    %f",rotadorY,posicionadorX,posicionadorY,posicionadorZ);	//Pointers
-					SetWindowTextA(hWnd,str0);
-#endif
-
-#if(USING_SERIAL==1)
-											
-					if(GetAsyncKeyState(VK_F10))
-						bMuscleTension=true;	
-#else
-					if(GetAsyncKeyState(VK_F1))
-						bMuscleTension=true;
-#endif
-
-
-
-					if(GetAsyncKeyState(VK_F1))		//Simula la señal de 1 del músculo
-					{
-						if (rotadorX<80.0f)//||(bBanderaDireccion&&rotadorX<70.0f))
-							rotadorX+=5.5f;
-					}
-					else if (rotadorX>-5.0f)//||(!bBanderaDireccion&&rotadorX>-5.0f))
-						rotadorX-=5.50f;
-
-
-
-
-#if(USING_SERIAL==1)   
-					ComunicacionSerialMandaByte(&dato1,&dato2,mandacaracter);
-#endif
-					
-					
-					//angulo+=(float)dato/20;
-					RenderizaEscena();				// Dibuja la escena
-					SwapBuffers(hDC);				// Intercambia los Buffers (Double Buffering)
-					bMuscleTension=false;
-				}
-
-				if(!ManejaTeclado()) return 0;
-			}	
-		}
-	}
-
-	// Finalización del programa
-	
+void on_exit() {
 	DescargaModelos();
 	DescargaTexturas();
-    CloseHandle(hSerial);
-
 	DestruyeVentanaOGL();							// Destruye la ventana
-	return (msg.wParam);							// Sale del programa
 }
- 
 
+int main() {
+	CargaModelos()
+	CargaTexturas();
+
+	glutInit(&argc, argv);
+	glutInitDisplayMode (GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
+	glutInitWindowSize(640, 480);
+	glutInitWindowPosition(0, 0);
+	int mainWindow = glutCreateWindow ("Prosthesis");
+	glutKeyboardFunc(processNormalKeys);
+	glutSpecialFunc(processSpecialKeys);
+	glutDisplayFunc(renderScene);
+	glutIdleFunc(renderScene);
+	glutReshapeFunc(resizeGLScene);
+	glutMainLoop();
+
+	// This goes at GLUT exit
+	atexit(on_exit);
+}
 
 int ManejaTeclado()
 {
@@ -1438,7 +1099,7 @@ int ManejaTeclado()
 		alturaCamara-=0.05f;
 		//ControlPersonaje(6);
 	}
-	//Controles de la iluminación
+	//Controles de la iluminaci?n
 	if (keys['Z'])
 		alturaObjetivo+=0.05f;
 		//LightPos[0] += 1.0f; //Hacia la derecha
@@ -1513,7 +1174,7 @@ int ManejaTeclado()
 		LightPos[2] += 1.0f; //Hacia adelante
 
 	if (keys['N'])
-		LightPos[2] -= 1.0f; //Hacia atrás
+		LightPos[2] -= 1.0f; //Hacia atr?s
 
 
 	if (keys['O']&&mandacaracter<255)
