@@ -6,7 +6,7 @@ else
 endif
 INCLUDE_DIR = -I/usr/include/GL/ -I. 
 CCX = clang++
-SOURCE_FILES = Main.cpp 3ds.cpp TGALoader.cpp Vector.cpp
+SOURCE_FILES = Vector.cpp TGALoader.cpp 3ds.cpp Main.cpp 
 
 all:
 	$(CXX) $(SOURCE_FILES) $(INCLUDE_DIR) $(OTHER_FLAGS) -o demo

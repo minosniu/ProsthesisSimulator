@@ -53,11 +53,11 @@ int TGALoader::LoadTGA(char *filename)				// Loads A TGA File Into Memory
 		fread(header,1,sizeof(header),file)!=sizeof(header))				// If So Read Next 6 Header Bytes
 	{
 		if (file == NULL)										// Did The File Even Exist? *Added Jim Strong*
-			return FALSE;										// Return False
+			return false;										// Return False
 		else													// Otherwise
 		{
 			fclose(file);										// If Anything Failed, Close The File
-			return FALSE;										// Return False
+			return false;										// Return False
 		}
 	}
 
@@ -69,7 +69,7 @@ int TGALoader::LoadTGA(char *filename)				// Loads A TGA File Into Memory
 		(header[4]!=24 && header[4]!=32))						// Is The TGA 24 or 32 Bit?
 	{
 		fclose(file);											// If Anything Failed, Close The File
-		return FALSE;											// Return False
+		return false;											// Return False
 	}
 
 	bpp	= header[4];								// Grab The TGA's Bits Per Pixel (24 or 32)
@@ -85,7 +85,7 @@ int TGALoader::LoadTGA(char *filename)				// Loads A TGA File Into Memory
 			free(imageData);							// If So, Release The Image Data
 
 		fclose(file);											// Close The File
-		return FALSE;											// Return False
+		return false;											// Return False
 	}
 
 	for(GLuint i=0; i<int(imageSize); i+=bytesPerPixel)			// Loop Through The Image Data

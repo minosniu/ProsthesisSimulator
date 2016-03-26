@@ -22,8 +22,8 @@
 //#include <gl/glu.h>			// Archivo de cabecera para la libreria GLu32
 //#include <gl/glaux.h>			// Archivo de cabecera para la libreria Glaux
 //#include <gl/glext.h>			// Archivo de cabecera para la libreria Glext
-//#include "Vector.h"
-//#include "TGALoader.h"
+#include "Vector.h"
+#include "TGALoader.h"
 
 void DibujaGrupoBloques();
 void DibujaGrupoArboles();

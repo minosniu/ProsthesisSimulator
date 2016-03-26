@@ -1,10 +1,11 @@
-#ifndef 3DS_H
-#define 3DS_H
+#ifndef LOADER3DS_H
+#define LOADER3DS_H
 
 #include "Main.h"
+#include <cstdint>
 using namespace std;
 
-//class CTga;
+class TGALoader;
 
 //>------ Primary Chunk, at the beginning of each file
 #define PRIMARY       0x4D4D
@@ -65,7 +66,7 @@ struct tMaterialInfo
 {
 	char  strName[255];			// The texture name
 	char  strFile[255];			// The texture file name (If this is set it's a texture map)
-	BYTE  color[3];				// The color of the object (R, G, B)
+	uint8_t  color[3];				// The color of the object (R, G, B)
 	int   texureId;				// the texture ID
 	float uTile;				// u tiling of texture  (Currently not used)
 	float vTile;				// v tiling of texture	(Currently not used)
@@ -123,9 +124,9 @@ public:
 
 	// This is the function that you call to load the 3DS
 	bool Import3DS(t3DModel *pModel, char *strFileName);
-	bool Load3DSFile(char *FileName, t3DModel *pModel, CTga *Textura);
-	void Render3DSFile(t3DModel *pModel, CTga *Textura, int tipo);
-	void UnLoad3DSFile(t3DModel *pModel, CTga *Textura);
+	bool Load3DSFile(char *FileName, t3DModel *pModel, TGALoader *Textura);
+	void Render3DSFile(t3DModel *pModel, TGALoader *Textura, int tipo);
+	void UnLoad3DSFile(t3DModel *pModel, TGALoader *Textura);
 	
 private:
 	// This reads in a string and saves it in the char array passed in
@@ -169,5 +170,5 @@ private:
 };
 
 
-#endif // 3DS_H
+#endif // LOADER3DS_H
 

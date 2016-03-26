@@ -68,7 +68,7 @@ float dimension1=15;
 float dimension2=dimension1*2/4;
 
 bool	keys[256];			// Arreglo para el manejo de teclado
-bool	active=TRUE;		// Bandera de ventana activa
+bool	active=true;		// Bandera de ventana activa
 
 int glWidth;
 int glHeight;
@@ -80,16 +80,16 @@ GLUquadricObj	*e;
 
 
 //Contenedores de texturas de cada modelo
-CTga textureModel1[10];
-CTga textureModel2[10];
-CTga textureModel3[10];
-CTga textureModel4[10];
-CTga textureModel5[10];
-CTga textureModel6[10];
-CTga textureModel7[10];
+TGALoader textureModel1[10];
+TGALoader textureModel2[10];
+TGALoader textureModel3[10];
+TGALoader textureModel4[10];
+TGALoader textureModel5[10];
+TGALoader textureModel6[10];
+TGALoader textureModel7[10];
 
 //Contenedor de texturas para el escenario
-CTga textura[16];
+TGALoader textura[16];
 
 //Objeto que da acceso a las funciones del cargador 3ds
 CLoad3DS g_Load3ds;
@@ -113,7 +113,7 @@ GLfloat LightPos[] = {-100.0f, 40.0f, 50.0f, 1.0f};		// Posici?n de la luz
 GLfloat LightAmb[] = { 0.9f,  0.9f, 0.9f, 1.0f};		// Valores de la componente ambiente
 GLfloat LightDif[] = { 0.9f,  0.9f, 0.9f, 1.0f};		// Valores de la componente difusa
 GLfloat LightSpc[] = { 0.6f,  0.6f, 0.6f, 1.0f};		// Valores de la componente especular
-CVector lightPosition;
+Vector lightPosition;
 
 //Variables para animaci?n de texturas
 float aText1;
@@ -743,7 +743,7 @@ int CargaModelos()
 	if(!g_Load3ds.Load3DSFile("Modelos/Palma.3ds", &g_3DModelPalma, textureModel5))
 		return 0;
 
-	return TRUE;
+	return true;
 }
 
 void DescargaModelos()
@@ -821,7 +821,7 @@ int IniGL(GLvoid)										// Aqui se configuran los parametros iniciales de Ope
 	InicializaParametrosdeControl();
 
 	
-	return TRUE;										
+	return true;										
 }
 float AngPos=PI;
 
@@ -840,7 +840,7 @@ void CambiaAnguloCamara(int funcion)
 
 float angu1=0,angu2=0;
 
-void DibujaLuz(CVector l)
+void DibujaLuz(Vector l)
 {
 	//Dibuja una esfera que representa la fuente luminosa
 	glDisable(GL_LIGHTING);				// Deshabilita iluminaci?n
@@ -858,7 +858,7 @@ void DibujaLuz(CVector l)
 }
 
 
-int RenderizaEscena(GLvoid)								// Aqui se dibuja todo lo que aparecera en la ventana
+void renderScene(GLvoid)								// Aqui se dibuja todo lo que aparecera en la ventana
 {
 	glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
 	
@@ -888,7 +888,6 @@ int RenderizaEscena(GLvoid)								// Aqui se dibuja todo lo que aparecera en la
 #ifdef DRAW_TRIPLE
 	DrawSimulatedFingers3(dato1,dato2,identificador);
 #endif
-	return TRUE;
 }
 
 int contador = 0;
@@ -896,11 +895,10 @@ int contador = 0;
 void on_exit() {
 	DescargaModelos();
 	DescargaTexturas();
-	DestruyeVentanaOGL();							// Destruye la ventana
 }
 
-int main() {
-	CargaModelos()
+int main(int argc, char** argv) {
+	CargaModelos();
 	CargaTexturas();
 
 	glutInit(&argc, argv);
@@ -909,162 +907,163 @@ int main() {
 	glutInitWindowPosition(0, 0);
 	int mainWindow = glutCreateWindow ("Prosthesis");
 	IniGL();
-	glutKeyboardFunc(processNormalKeys);
-	glutSpecialFunc(processSpecialKeys);
+	//glutKeyboardFunc(processNormalKeys);
+	//glutSpecialFunc(processSpecialKeys);
 	glutDisplayFunc(renderScene);
 	glutIdleFunc(renderScene);
 	glutReshapeFunc(resizeGLScene);
-	glutMainLoop();
-
 	// This goes at GLUT exit
 	atexit(on_exit);
+
+	glutMainLoop();
 }
 
-int ManejaTeclado()
-{
-	if(keys[VK_SPACE])
-	{
-		bBanderaDireccion=true;
-	}
+// TODO: Implement using GLUT
+//int ManejaTeclado()
+//{
+	//if(keys[VK_SPACE])
+	//{
+		//bBanderaDireccion=true;
+	//}
 
-	if(keys[VK_RETURN])
-	{
-		bBanderaDireccion=false;
-	}
+	//if(keys[VK_RETURN])
+	//{
+		//bBanderaDireccion=false;
+	//}
 
-	if(keys[VK_UP])
-	{
-		distancia-=0.05f;
+	//if(keys[VK_UP])
+	//{
+		//distancia-=0.05f;
 		
-		//ControlPersonaje(3);
-	}
-	if(keys[VK_DOWN])
-	{
-		distancia+=0.05f;
+		////ControlPersonaje(3);
+	//}
+	//if(keys[VK_DOWN])
+	//{
+		//distancia+=0.05f;
 
-		//ControlPersonaje(4);
-	}
-	if(keys[VK_LEFT])
-	{
-		angulo+=0.008f;
-		//ControlPersonaje(2);
-	}
-	if(keys[VK_RIGHT])
-	{
-		angulo-=0.008f;
+		////ControlPersonaje(4);
+	//}
+	//if(keys[VK_LEFT])
+	//{
+		//angulo+=0.008f;
+		////ControlPersonaje(2);
+	//}
+	//if(keys[VK_RIGHT])
+	//{
+		//angulo-=0.008f;
 
-		//ControlPersonaje(1);
-	}
-	if(keys[VK_SHIFT])
-	{
-		alturaCamara+=0.05f;
-		//ControlPersonaje(5);
-	}
-	if(keys[VK_CONTROL])
-	{
-		alturaCamara-=0.05f;
-		//ControlPersonaje(6);
-	}
-	//Controles de la iluminaci?n
-	if (keys['Z'])
-		alturaObjetivo+=0.05f;
-		//LightPos[0] += 1.0f; //Hacia la derecha
+		////ControlPersonaje(1);
+	//}
+	//if(keys[VK_SHIFT])
+	//{
+		//alturaCamara+=0.05f;
+		////ControlPersonaje(5);
+	//}
+	//if(keys[VK_CONTROL])
+	//{
+		//alturaCamara-=0.05f;
+		////ControlPersonaje(6);
+	//}
+	////Controles de la iluminaci?n
+	//if (keys['Z'])
+		//alturaObjetivo+=0.05f;
+		////LightPos[0] += 1.0f; //Hacia la derecha
 
-	if (keys['X'])
-		alturaObjetivo-=0.05f;
-		//LightPos[0] -= 1.0f; //Hacia la izquierda
+	//if (keys['X'])
+		//alturaObjetivo-=0.05f;
+		////LightPos[0] -= 1.0f; //Hacia la izquierda
 
-	if (keys['Q'])
-		posicionadorX+=0.01f;
+	//if (keys['Q'])
+		//posicionadorX+=0.01f;
 
-	if (keys['W'])
-		posicionadorY+=0.01f;
+	//if (keys['W'])
+		//posicionadorY+=0.01f;
 
-	if (keys['E'])
-		posicionadorZ+=0.01f;
-
-	
-	if (keys['A'])
-		posicionadorX-=0.01f;
-
-	if (keys['S'])
-		posicionadorY-=0.01f;
-
-	if (keys['D'])
-		posicionadorZ-=0.01f;
-
-
-	if ((keys['R']&&rotadorX<80.0f))//||(bBanderaDireccion&&rotadorX<70.0f))
-		rotadorX+=1.5f;
-
-	if (keys['T'])
-		rotadorY+=1.5f;
-
-	if (keys['Y'])
-		rotadorZ+=1.5f;
-
-
-
-
-	if (keys['F']&&rotadorX>-5.0f)//||(!bBanderaDireccion&&rotadorX>-5.0f))
-		rotadorX-=1.50f;
-
-	if (keys['G'])
-		rotadorY-=1.5f;
-
-	if (keys['H'])
-		rotadorZ-=1.5f;
-
-
-	if (keys['U'])
-		rotadorX2+=0.5f;
-
-	if (keys['J'])
-		rotadorX2-=0.5f;
-
-
-	if (keys['I'])
-		rotadorX3+=0.5f;
-
-	if (keys['K'])
-		rotadorX3-=0.5f;
-
-
-	if (keys['C'])
-		LightPos[1] += 1.0f; //Hacia arriba
-
-	if (keys['V'])
-		LightPos[1] -= 1.0f; //Hacia abajo
-
-	if (keys['B'])
-		LightPos[2] += 1.0f; //Hacia adelante
-
-	if (keys['N'])
-		LightPos[2] -= 1.0f; //Hacia atr?s
-
-
-	if (keys['O']&&mandacaracter<255)
-		mandacaracter+=1;
-
-	if (keys['L']&&mandacaracter>0)
-		mandacaracter-=1;
+	//if (keys['E'])
+		//posicionadorZ+=0.01f;
 
 	
-	if (keys['1'])
-		iRenderMode=1;
-	else if (keys['2'])
-		iRenderMode=2;
+	//if (keys['A'])
+		//posicionadorX-=0.01f;
+
+	//if (keys['S'])
+		//posicionadorY-=0.01f;
+
+	//if (keys['D'])
+		//posicionadorZ-=0.01f;
+
+
+	//if ((keys['R']&&rotadorX<80.0f))//||(bBanderaDireccion&&rotadorX<70.0f))
+		//rotadorX+=1.5f;
+
+	//if (keys['T'])
+		//rotadorY+=1.5f;
+
+	//if (keys['Y'])
+		//rotadorZ+=1.5f;
+
+
+
+
+	//if (keys['F']&&rotadorX>-5.0f)//||(!bBanderaDireccion&&rotadorX>-5.0f))
+		//rotadorX-=1.50f;
+
+	//if (keys['G'])
+		//rotadorY-=1.5f;
+
+	//if (keys['H'])
+		//rotadorZ-=1.5f;
+
+
+	//if (keys['U'])
+		//rotadorX2+=0.5f;
+
+	//if (keys['J'])
+		//rotadorX2-=0.5f;
+
+
+	//if (keys['I'])
+		//rotadorX3+=0.5f;
+
+	//if (keys['K'])
+		//rotadorX3-=0.5f;
+
+
+	//if (keys['C'])
+		//LightPos[1] += 1.0f; //Hacia arriba
+
+	//if (keys['V'])
+		//LightPos[1] -= 1.0f; //Hacia abajo
+
+	//if (keys['B'])
+		//LightPos[2] += 1.0f; //Hacia adelante
+
+	//if (keys['N'])
+		//LightPos[2] -= 1.0f; //Hacia atr?s
+
+
+	//if (keys['O']&&mandacaracter<255)
+		//mandacaracter+=1;
+
+	//if (keys['L']&&mandacaracter>0)
+		//mandacaracter-=1;
+
+	
+	//if (keys['1'])
+		//iRenderMode=1;
+	//else if (keys['2'])
+		//iRenderMode=2;
 
 	
 	
-	if (keys['T'])		//Title
-		bShowData=false;
-	else if (keys['D'])		//Reset
-		bShowData=true;
+	//if (keys['T'])		//Title
+		//bShowData=false;
+	//else if (keys['D'])		//Reset
+		//bShowData=true;
 
 
-	return TRUE;
-}
+	//return true;
+//}
 
 
 GLvoid glPrint(const char *fmt, ...)					// Custom GL "Print" Routine
