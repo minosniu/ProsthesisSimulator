@@ -13,22 +13,9 @@
 
 #define errorMsg(cadena) print("%s", cadena)//MessageBoxA(NULL,cadena,"Mensaje",MB_OK)
 
-//#pragma comment(lib, "opengl32.lib")
-//#pragma comment(lib, "glu32.lib")
-
 #include "Main.h"
 #include "3ds.h"
 #include <math.h>
-
-#ifdef __linux__
-    #include <GL/gl.h>
-    #include <GL/glu.h>
-    #include <GL/glut.h>
-#elif __APPLE__
-    #include <OpenGL/gl.h>
-    #include <OpenGL/glu.h>
-    #include <GLUT/glut.h>
-#endif
 
 GLuint	base;				// Base Display List For The Font Set
 
