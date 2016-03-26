@@ -1,4 +1,4 @@
-#include "Materiales.h"
+#include "Materials.h"
 
 //Valores default del material en OpenGL
 GLfloat gDefaultDiffuse[] = {0.8f, 0.8f, 0.8f, 1.0f};
@@ -91,17 +91,17 @@ GLfloat esmeraldaDif[4] = {0.07568f,0.61424f,0.07568f,0.55f};
 GLfloat esmeraldaSpe[4] = {0.633f,0.727811f,0.633f,0.55};
 GLfloat esmeraldaShi = 76.8f;
 
-CMateriales::CMateriales()
+CMaterials::CMaterials()
 {
 	
 }
 
-CMateriales::~CMateriales()
+CMaterials::~CMaterials()
 {
 	
 }
 
-void CMateriales::SeleccionaMaterial(int tipo)
+void CMaterials::SeleccionaMaterial(int tipo)
 {
 	if(tipo == 0)
 	{

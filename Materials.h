@@ -1,13 +1,13 @@
-#ifndef __MATERIALES_H__
-#define __MATERIALES_H__
+#ifndef __MATERIALS_H__
+#define __MATERIALS_H__
 
 #include "main.h"
 
-class CMateriales
+class CMaterials
 {
 	public:
-		CMateriales();
-		~CMateriales(); 
+		CMaterials();
+		~CMaterials(); 
 		
 		void SeleccionaMaterial(int tipo);
 

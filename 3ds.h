@@ -1,5 +1,5 @@
-#ifndef _3DS_H
-#define _3DS_H
+#ifndef 3DS_H
+#define 3DS_H
 
 #include "Main.h"
 using namespace std;
@@ -169,5 +169,5 @@ private:
 };
 
 
-#endif
+#endif // 3DS_H
 
