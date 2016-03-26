@@ -42,9 +42,6 @@ int iRenderMode=1;	//1	Normal
 unsigned char dato1=1,dato2=0,identificador=0;
 char mandacaracter='8';
 
-//Serial Port Handle
-HANDLE hSerial;
-
 bool bBanderaDireccion=false;
 
 //Variables para vista
@@ -80,17 +77,8 @@ float AngProximalMedio;
 float AngProximalPulgar;
 float AngProximalMenique;
 
-
-
-	
 float dimension1=15;
 float dimension2=dimension1*2/4;
-
-
-HDC			hDC=NULL;		// Dispositivo de contexto GDI
-HGLRC		hRC=NULL;		// Contexto de renderizado
-HWND		hWnd=NULL;		// Manejador de ventana
-HINSTANCE	hInstance;		// Instancia de la aplicacion
 
 bool	keys[256];			// Arreglo para el manejo de teclado
 bool	active=TRUE;		// Bandera de ventana activa
@@ -147,114 +135,9 @@ GLvoid glPrint(const char *fmt, ...);					// Custom GL "Print" Routine
 
 
 // Biological Properties - Muscle	
-
-
 float gMusB = 50.0f; 
 float gMusKse = 136.0f;//136.0f;
 float gMusKpe = 75.0f;//120.0;
-
-
-
-
-void initSerialPort()
-{
-	//ABRIR EL PUERTO
-     hSerial = CreateFile("COM4",
-             GENERIC_READ|GENERIC_WRITE,
-             0,
-             0,
-             OPEN_EXISTING,
-             FILE_ATTRIBUTE_NORMAL,
-             0);
-     if(hSerial==INVALID_HANDLE_VALUE)
-     {
-         if(GetLastError()==ERROR_FILE_NOT_FOUND)
-         {
-             errorMsg("No existe el puerto serial");
-         }
-         errorMsg("No se que paso, pero no puede estar bien");
-     }
-     
-     //PREPARAR LOS PARAMETROS
-     DCB dcbSerialParams = {0};
-     dcbSerialParams.DCBlength=sizeof(dcbSerialParams);
-     if (!GetCommState(hSerial, &dcbSerialParams)) {
-        errorMsg("Error al obtener el estado al puerto");
-     }
-	 dcbSerialParams.BaudRate=CBR_115200;
-     dcbSerialParams.ByteSize=8;
-     dcbSerialParams.StopBits=ONESTOPBIT;
-     dcbSerialParams.Parity=NOPARITY;
-     if(!SetCommState(hSerial, &dcbSerialParams))
-     {
-         errorMsg("Error al asignar el estado al puerto");
-     }
-     
-     //PREPARAR LOS TIMEOUTS
-     COMMTIMEOUTS timeouts={0};
-     timeouts.ReadIntervalTimeout=50;
-     timeouts.ReadTotalTimeoutConstant=50;
-     timeouts.ReadTotalTimeoutMultiplier=10;   
-     timeouts.WriteTotalTimeoutConstant=50;
-     timeouts.WriteTotalTimeoutMultiplier=10;
-     if(!SetCommTimeouts(hSerial, &timeouts))
-     {
-         errorMsg("Algo paso con los timeouts");
-     }
-}
-
-
-
-void ComunicacionSerialMandaByte(unsigned char *dat1,char cManda)
-{
-	 char szBuff[1] = {cManda};
-     DWORD dwBytesEscritos = 0;
-     if(!WriteFile(hSerial, szBuff, 1, &dwBytesEscritos, NULL))
-     {
-         errorMsg("Algun error en la escritura de datos");
-     }
-
-	 unsigned char szBuff2 ;
-     DWORD dwBytesRead = 0;
-	 if(!ReadFile(hSerial, &szBuff2, 1, &dwBytesRead, 0))
-     {
-         errorMsg("Algun error en la lectura de datos 1");
-     }
-	 *dat1=szBuff2;
-}
-
-
-
-
-
-void ComunicacionSerialMandaByte(unsigned char *dat1,unsigned char *dat2,char cManda)
-{
-	 char szBuff[1] = {cManda};
-     DWORD dwBytesEscritos = 0;
-     if(!WriteFile(hSerial, szBuff, 1, &dwBytesEscritos, NULL))
-     {
-         errorMsg("Algun error en la escritura de datos");
-     }
-
-	 unsigned char szBuff1 ;
-     DWORD dwBytesRead1 = 0;
-	 if(!ReadFile(hSerial, &szBuff1, 1, &dwBytesRead1, 0))
-     {
-         errorMsg("Algun error en la lectura de datos 1");
-     }
-	 *dat1=szBuff1;
-
-	 unsigned char szBuff2 ;
-     DWORD dwBytesRead2 = 0;
-	 if(!ReadFile(hSerial, &szBuff2, 1, &dwBytesRead2, 0))
-     {
-         errorMsg("Algun error en la lectura de datos 1");
-     }
-	 *dat2=szBuff2;
-}
-
-
-
 
 float d_force(float T_0, float x1, float x2, float A)
 {
@@ -811,8 +694,6 @@ void DibujaProtesis(short dat1,short dat2,short iden)
 	glPopMatrix();
 }
 
-LRESULT	CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);	// Declaracion de WndProc (Procedimiento de ventana)
-
 GLvoid resizeGLScene(GLsizei width, GLsizei height)	// Redimensiona e inicializa la ventana
 {
 	if (height==0)							// Para que no se presente una division por cero
@@ -902,16 +783,13 @@ void DescargaModelos()
 	g_Load3ds.UnLoad3DSFile(&g_3DModelPalma, textureModel5);	
 }
 
-void CargaTexturas()
-{
+void CargaTexturas() {
 }
 
-void DescargaTexturas()
-{
+void DescargaTexturas() {
 }
 
-void InicializaParametrosdeControl()
-{
+void InicializaParametrosdeControl() {
 	//Vamos a definir un valor de un ?ngulo de apertura entre dos
 	anguloOjo=1.0f*GL_PI/180.0f;	//4 grados entre ojos.
 }
@@ -1043,6 +921,7 @@ int main() {
 	glutInitWindowSize(640, 480);
 	glutInitWindowPosition(0, 0);
 	int mainWindow = glutCreateWindow ("Prosthesis");
+	IniGL();
 	glutKeyboardFunc(processNormalKeys);
 	glutSpecialFunc(processSpecialKeys);
 	glutDisplayFunc(renderScene);
