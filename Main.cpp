@@ -811,18 +811,16 @@ int IniGL(GLvoid)										// Aqui se configuran los parametros iniciales de Ope
 	glEnable(GL_LIGHT0);					// Activa luz0
 	glEnable(GL_LIGHTING);					// Habilita la iluminaci?n
 
-	CargaModelos();
-	CargaTexturas();
-
-	//    initSerialPort();
-
+	// TODO: Add me back
+	//CargaModelos();
+	//CargaTexturas();
 
 	e=gluNewQuadric();
 	InicializaParametrosdeControl();
 
-	
 	return true;										
 }
+
 float AngPos=PI;
 
 void CambiaAnguloCamara(int funcion)
@@ -893,13 +891,15 @@ void renderScene(GLvoid)								// Aqui se dibuja todo lo que aparecera en la ve
 int contador = 0;
 
 void on_exit() {
-	DescargaModelos();
-	DescargaTexturas();
+	// TODO Add me back
+	//DescargaModelos();
+	//DescargaTexturas();
 }
 
 int main(int argc, char** argv) {
-	CargaModelos();
-	CargaTexturas();
+	// TODO Add me back
+	//CargaModelos();
+	//CargaTexturas();
 
 	glutInit(&argc, argv);
 	glutInitDisplayMode (GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
