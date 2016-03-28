@@ -119,6 +119,8 @@ Vector lightPosition;
 float aText1;
 
 GLvoid glPrint(const char *fmt, ...);					// Custom GL "Print" Routine
+void processNormalKeys(unsigned char key, int x, int y); 
+void processSpecialKeys(int key, int x, int y);
 
 
 // Biological Properties - Muscle	
@@ -907,7 +909,7 @@ int main(int argc, char** argv) {
 	glutInitWindowPosition(0, 0);
 	int mainWindow = glutCreateWindow ("Prosthesis");
 	IniGL();
-	//glutKeyboardFunc(processNormalKeys);
+	glutKeyboardFunc(processNormalKeys);
 	//glutSpecialFunc(processSpecialKeys);
 	glutDisplayFunc(renderScene);
 	glutIdleFunc(renderScene);
@@ -919,152 +921,54 @@ int main(int argc, char** argv) {
 }
 
 // TODO: Implement using GLUT
-//int ManejaTeclado()
-//{
-	//if(keys[VK_SPACE])
-	//{
-		//bBanderaDireccion=true;
-	//}
-
-	//if(keys[VK_RETURN])
-	//{
-		//bBanderaDireccion=false;
-	//}
-
-	//if(keys[VK_UP])
-	//{
-		//distancia-=0.05f;
-		
-		////ControlPersonaje(3);
-	//}
-	//if(keys[VK_DOWN])
-	//{
-		//distancia+=0.05f;
-
-		////ControlPersonaje(4);
-	//}
-	//if(keys[VK_LEFT])
-	//{
-		//angulo+=0.008f;
-		////ControlPersonaje(2);
-	//}
-	//if(keys[VK_RIGHT])
-	//{
-		//angulo-=0.008f;
-
-		////ControlPersonaje(1);
-	//}
-	//if(keys[VK_SHIFT])
-	//{
-		//alturaCamara+=0.05f;
-		////ControlPersonaje(5);
-	//}
-	//if(keys[VK_CONTROL])
-	//{
-		//alturaCamara-=0.05f;
-		////ControlPersonaje(6);
-	//}
-	////Controles de la iluminaci?n
-	//if (keys['Z'])
-		//alturaObjetivo+=0.05f;
-		////LightPos[0] += 1.0f; //Hacia la derecha
-
-	//if (keys['X'])
-		//alturaObjetivo-=0.05f;
-		////LightPos[0] -= 1.0f; //Hacia la izquierda
-
-	//if (keys['Q'])
-		//posicionadorX+=0.01f;
-
-	//if (keys['W'])
-		//posicionadorY+=0.01f;
-
-	//if (keys['E'])
-		//posicionadorZ+=0.01f;
-
-	
-	//if (keys['A'])
-		//posicionadorX-=0.01f;
-
-	//if (keys['S'])
-		//posicionadorY-=0.01f;
-
-	//if (keys['D'])
-		//posicionadorZ-=0.01f;
-
-
-	//if ((keys['R']&&rotadorX<80.0f))//||(bBanderaDireccion&&rotadorX<70.0f))
-		//rotadorX+=1.5f;
-
-	//if (keys['T'])
-		//rotadorY+=1.5f;
-
-	//if (keys['Y'])
-		//rotadorZ+=1.5f;
-
-
-
-
-	//if (keys['F']&&rotadorX>-5.0f)//||(!bBanderaDireccion&&rotadorX>-5.0f))
-		//rotadorX-=1.50f;
-
-	//if (keys['G'])
-		//rotadorY-=1.5f;
-
-	//if (keys['H'])
-		//rotadorZ-=1.5f;
-
-
-	//if (keys['U'])
-		//rotadorX2+=0.5f;
-
-	//if (keys['J'])
-		//rotadorX2-=0.5f;
-
-
-	//if (keys['I'])
-		//rotadorX3+=0.5f;
-
-	//if (keys['K'])
-		//rotadorX3-=0.5f;
-
-
-	//if (keys['C'])
-		//LightPos[1] += 1.0f; //Hacia arriba
-
-	//if (keys['V'])
-		//LightPos[1] -= 1.0f; //Hacia abajo
-
-	//if (keys['B'])
-		//LightPos[2] += 1.0f; //Hacia adelante
-
-	//if (keys['N'])
-		//LightPos[2] -= 1.0f; //Hacia atr?s
-
-
-	//if (keys['O']&&mandacaracter<255)
-		//mandacaracter+=1;
-
-	//if (keys['L']&&mandacaracter>0)
-		//mandacaracter-=1;
-
-	
-	//if (keys['1'])
-		//iRenderMode=1;
-	//else if (keys['2'])
-		//iRenderMode=2;
-
-	
-	
-	//if (keys['T'])		//Title
-		//bShowData=false;
-	//else if (keys['D'])		//Reset
-		//bShowData=true;
-
-
-	//return true;
-//}
-
+void processSpecialKeys(int key, int x, int y)
+{
+	switch (key) {
+		case GLUT_KEY_UP : distancia -= 0.05f; break;
+		case GLUT_KEY_DOWN : distancia += 0.05f; break;
+		case GLUT_KEY_LEFT : angulo += 0.008f; break;
+		case GLUT_KEY_RIGHT : angulo -= 0.008f; break;
+		default: break;
+	}
+}
+void processNormalKeys(unsigned char key, int x, int y)
+{
+	switch (key) {
+		case 27: exit(0);
+		case 32: bBanderaDireccion = true; break;
+		case 13: bBanderaDireccion = false; break;
+		//Illumination controls
+		case 'z': alturaObjetivo += 0.05f; break;
+		case 'x': alturaObjetivo -= 0.05f; break;
+		case 'q': posicionadorX += 0.01f; break;
+		case 'w': posicionadorY += 0.01f; break;
+		case 'e': posicionadorZ += 0.01f; break;
+		case 'a': posicionadorX -= 0.01f; break;
+		case 's': posicionadorY -= 0.01f; break;
+		case 'd': posicionadorZ -= 0.01f; break;
+		case 'r': if(rotadorX<80.0f) {rotadorX += 1.5f; break;}
+		case 't': rotadorY += 1.5f; break;
+		case 'y': rotadorZ += 1.5f; break;
+		case 'f': if(rotadorX>-5.0f) {rotadorX -= 1.50f; break;}
+		case 'g': rotadorY -= 1.5f; break;
+		case 'h': rotadorZ -= 1.5f; break;
+		case 'u': rotadorX2 += 0.5f; break;
+		case 'j': rotadorX2 -= 0.5f; break;
+		case 'i': rotadorX3 += 0.5f; break;
+		case 'k': rotadorX3 -= 0.5f; break;
+		case 'c': LightPos[1]  +=  1.0f; break; //Hacia arriba
+		case 'v': LightPos[1]  -=  1.0f; break; //Hacia abajo
+		case 'b': LightPos[2]  +=  1.0f; break; //Hacia adelante
+		case 'n': LightPos[2]  -=  1.0f; break; //Hacia atr?s
+		case '1': iRenderMode=1; break;
+		case '2': iRenderMode=2; break;
+		case '9': bShowData=false; break;
+		case '0': bShowData=true; break;
+		case 'o': alturaCamara += 0.05f; break;
+		case 'p': alturaCamara -= 0.05f; break;
+		default: break;
+	}
+}
 
 GLvoid glPrint(const char *fmt, ...)					// Custom GL "Print" Routine
 {
