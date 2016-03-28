@@ -910,7 +910,7 @@ int main(int argc, char** argv) {
 	int mainWindow = glutCreateWindow ("Prosthesis");
 	IniGL();
 	glutKeyboardFunc(processNormalKeys);
-	//glutSpecialFunc(processSpecialKeys);
+	glutSpecialFunc(processSpecialKeys);
 	glutDisplayFunc(renderScene);
 	glutIdleFunc(renderScene);
 	glutReshapeFunc(resizeGLScene);
