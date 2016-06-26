@@ -11,9 +11,9 @@ float Absoluto(float num)
 	return num;
 }
 								
-Vector Cruz(Vector vVector1, Vector vVector2)
+CVector Cruz(CVector vVector1, CVector vVector2)
 {
-	Vector vNormal;									// Es el vector que guardara el producto cruz
+	CVector vNormal;									// Es el vector que guardara el producto cruz
 
 	// El valor en X para el vector es:  (V1.y * V2.z) - (V1.z * V2.y)													// Get the X value
 	vNormal.x = ((vVector1.y * vVector2.z) - (vVector1.z * vVector2.y));
@@ -27,15 +27,15 @@ Vector Cruz(Vector vVector1, Vector vVector2)
 	return vNormal;										// Regresa el producto cruz (Normal)
 }
 
-float Magnitud(Vector vNormal)
+float Magnitud(CVector vNormal)
 {
 	// Esto regresara la magnitud o "norma" del vector.
-	// Esta es la ecuaci?n:  magnitud = sqrt(V.x^2 + V.y^2 + V.z^2)  Donde V is el vector
+	// Esta es la ecuación:  magnitud = sqrt(V.x^2 + V.y^2 + V.z^2)  Donde V is el vector
 
 	return (float)sqrt( (vNormal.x * vNormal.x) + (vNormal.y * vNormal.y) + (vNormal.z * vNormal.z) );
 }
 
-Vector Normaliza(Vector vNormal)
+CVector Normaliza(CVector vNormal)
 {
 	float magnitud = Magnitud(vNormal);				// Se obtiene la magnitud del vector
 

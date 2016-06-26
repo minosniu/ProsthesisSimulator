@@ -1,13 +1,13 @@
-#ifndef TGALOADER_H
-#define TGALOADER_H
+#ifndef __CARGADORTGA_H__
+#define __CARGADORTGA_H__
 
 #include "Main.h"	
 
-class TGALoader
+class CTga
 {
 	public:
-		TGALoader();
-		~TGALoader(); 
+		CTga();
+		~CTga(); 
 		
 		int LoadTGA(char *filename);
 		int freeData();
@@ -21,4 +21,4 @@ class TGALoader
 		
 };
 
-#endif // TGALOADER_H
+#endif

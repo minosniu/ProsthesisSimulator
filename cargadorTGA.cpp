@@ -1,17 +1,17 @@
-#include "TGALoader.h"
+#include "cargadorTGA.h"
 
-TGALoader::TGALoader()
+CTga::CTga()
 {
 	//StateVars = new Globales;
 	texID=0;
 }
 
-TGALoader::~TGALoader()
+CTga::~CTga()
 {
 	Elimina();
 }
 
-int TGALoader::freeData()
+int CTga::freeData()
 {
 	
 	if(imageData != 0)
@@ -22,7 +22,7 @@ int TGALoader::freeData()
 	return 0;
 }
 
-void TGALoader::Elimina()
+void CTga::Elimina()
 {
 	if(texID)
     {
@@ -33,7 +33,7 @@ void TGALoader::Elimina()
 
 }
 
-int TGALoader::LoadTGA(char *filename)				// Loads A TGA File Into Memory
+int CTga::LoadTGA(char *filename)				// Loads A TGA File Into Memory
 {    
 	
 	GLubyte		TGAheader[12]={0,0,2,0,0,0,0,0,0,0,0,0};		// Uncompressed TGA Header

@@ -1,9 +1,6 @@
-
-#include "Main.h"
+#include "main.h"
 #include "3ds.h"
-#include <iostream>
 #include <assert.h>
-#include <cstdint>
 
 int gBuffer[50000] = {0};					// This is used to read past unwanted data
 
@@ -44,7 +41,6 @@ bool CLoad3DS::Import3DS(t3DModel *pModel, char *strFileName)
 	if(!m_FilePointer) 
 	{
 		sprintf(strMessage, "Unable to find the file: %s!", strFileName);
-		std::cerr << "ERROR" << std::endl;
 		//MessageBox(NULL, strMessage, "Error", MB_OK);
 		return false;
 	}
@@ -61,7 +57,6 @@ bool CLoad3DS::Import3DS(t3DModel *pModel, char *strFileName)
 	{
 		sprintf(strMessage, "Unable to load PRIMARY chuck from file: %s!", strFileName);
 		//MessageBox(NULL, strMessage, "Error", MB_OK);
-		std::cerr << "ERROR" << std::endl;
 		return false;
 	}
 
@@ -137,7 +132,6 @@ void CLoad3DS::ProcessNextChunk(t3DModel *pModel, tChunk *pPreviousChunk)
 			// If the file version is over 3, give a warning that there could be a problem
 			if ((currentChunk.length - currentChunk.bytesRead == 4) && (gBuffer[0] > 0x03)) {
 				//MessageBox(NULL, "This 3DS file is over version 3 so it may load incorrectly", "Warning", MB_OK);
-				std::cerr << "ErrorThis 3DS file is over version 3 so it may load incorrectly" << std::endl;
 			}
 			break;
 
@@ -575,7 +569,7 @@ void CLoad3DS::ReadObjectMaterial(t3DModel *pModel, t3DObject *pObject, tChunk *
 	pPreviousChunk->bytesRead += fread(gBuffer, 1, pPreviousChunk->length - pPreviousChunk->bytesRead, m_FilePointer);
 }			
 
-bool CLoad3DS::Load3DSFile(char *FileName, t3DModel *pModel, TGALoader *Textura)
+bool CLoad3DS::Load3DSFile(char *FileName, t3DModel *pModel, CTga *Textura)
 {
 	char sZTexturePath[256];
 	char sZTextureName[30];
@@ -615,7 +609,7 @@ bool CLoad3DS::Load3DSFile(char *FileName, t3DModel *pModel, TGALoader *Textura)
 	return true;
 }
 
-void CLoad3DS::Render3DSFile(t3DModel *pModel, TGALoader *Textura, int tipo)
+void CLoad3DS::Render3DSFile(t3DModel *pModel, CTga *Textura, int tipo)
 {
 	// Since we know how many objects our model has, go through each of them.
 	for(int i = 0; i < pModel->numOfObjects; i++)
@@ -700,7 +694,7 @@ void CLoad3DS::Render3DSFile(t3DModel *pModel, TGALoader *Textura, int tipo)
 
 }
 
-void CLoad3DS::UnLoad3DSFile(t3DModel *pModel, TGALoader *Textura)
+void CLoad3DS::UnLoad3DSFile(t3DModel *pModel, CTga *Textura)
 {
 	// Go through all the objects in the scene
 	for(int i = 0; i < pModel->numOfObjects; i++)

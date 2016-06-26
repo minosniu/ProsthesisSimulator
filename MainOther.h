@@ -1,5 +1,5 @@
-#ifndef _MAIN_H
-#define _MAIN_H
+#ifndef MAIN_H
+#define MAIN_H
 
 //#include <windows.h>		// Archivo de cabecera para Windows
 #include <math.h>			// Archivo de cabecera para Funciones Matem?ticas
@@ -7,17 +7,21 @@
 #include <stdlib.h>			// Header File For Standard Library
 #include <fstream>
 #include <vector>
+#ifdef __linux__
+    #include <GL/gl.h>
+    #include <GL/glu.h>
+    #include <GL/glut.h>
+#elif __APPLE__
+    #include <OpenGL/gl.h>
+    #include <OpenGL/glu.h>
+    #include <GLUT/glut.h>
+#endif
+
 //#include <crtdbg.h>
-// MAC OS X
-#include <OpenGL/gl.h>
-#include <OpenGL/glu.h>
-#include <GLUT/glut.h>
-// WINDOWS
 //#include <gl/gl.h>				// Archivo de cabecera para la libreria OpenGL32
 //#include <gl/glu.h>			// Archivo de cabecera para la libreria GLu32
 //#include <gl/glaux.h>			// Archivo de cabecera para la libreria Glaux
 //#include <gl/glext.h>			// Archivo de cabecera para la libreria Glext
-//////
 #include "Vector.h"
 #include "cargadorTGA.h"
 
@@ -29,12 +33,12 @@ int  ManejaTeclado();
 
 struct paramObjCam
 {
-	CVector PosicionObj;	//La posici?n (x,y,z) del objeto
-	CVector PosicionObjAnt;	//La posici?n anterior (x,y,z) del objeto
-	CVector Direccion;		//La direcci?n en que se dirige el objeto en forma de vector=(x,y,z)
-	CVector DireccionCam;//La direcci?n que define la posici?n de la c?mara respecto al personaje IZQUIERDA
-	CVector PosicionCam; //La posici?n de la c?mara que sigue al objeto con origen en el ojo izquierdo
-	CVector ObjetivoCam;	//El punto (x,y,z) que est? viendo la c?mara izquierda
+	Vector PosicionObj;	//La posici?n (x,y,z) del objeto
+	Vector PosicionObjAnt;	//La posici?n anterior (x,y,z) del objeto
+	Vector Direccion;		//La direcci?n en que se dirige el objeto en forma de vector=(x,y,z)
+	Vector DireccionCam;//La direcci?n que define la posici?n de la c?mara respecto al personaje IZQUIERDA
+	Vector PosicionCam; //La posici?n de la c?mara que sigue al objeto con origen en el ojo izquierdo
+	Vector ObjetivoCam;	//El punto (x,y,z) que est? viendo la c?mara izquierda
 
 	float VelocidadObj;		//La velocidad a la que se mueve el objeto
 	float DistanciaCam;		//La distancia que la c?mara est? separada del objeto

@@ -1,11 +1,10 @@
-#ifndef LOADER3DS_H
-#define LOADER3DS_H
+#ifndef _3DS_H
+#define _3DS_H
 
 #include "Main.h"
-#include <cstdint>
 using namespace std;
 
-class TGALoader;
+//class CTga;
 
 //>------ Primary Chunk, at the beginning of each file
 #define PRIMARY       0x4D4D
@@ -124,9 +123,9 @@ public:
 
 	// This is the function that you call to load the 3DS
 	bool Import3DS(t3DModel *pModel, char *strFileName);
-	bool Load3DSFile(char *FileName, t3DModel *pModel, TGALoader *Textura);
-	void Render3DSFile(t3DModel *pModel, TGALoader *Textura, int tipo);
-	void UnLoad3DSFile(t3DModel *pModel, TGALoader *Textura);
+	bool Load3DSFile(char *FileName, t3DModel *pModel, CTga *Textura);
+	void Render3DSFile(t3DModel *pModel, CTga *Textura, int tipo);
+	void UnLoad3DSFile(t3DModel *pModel, CTga *Textura);
 	
 private:
 	// This reads in a string and saves it in the char array passed in
@@ -170,5 +169,5 @@ private:
 };
 
 
-#endif // LOADER3DS_H
+#endif
 
